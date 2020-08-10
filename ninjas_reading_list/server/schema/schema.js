@@ -11,16 +11,16 @@ const {
 
 // Dummmy Data
 let books = [
-  {name: 'Name of the Wind', genre: 'Fantasy', 'id': '1'},
-  {name: 'The Final Empire', genre: 'Fantasy', 'id': '2'},
-  {name: 'The Long Earth', genre: 'Sci-Fic', 'id': '3'}
+  {id: '1', name: 'Name of the Wind', genre: 'Fantasy', authorId: '1'},
+  {id: '2', name: 'The Final Empire', genre: 'Fantasy', authorId: '2'},
+  {id: '3', name: 'The Long Earth', genre: 'Sci-Fic', authorId: '3'}
 ]
 
 // Dummmy Data
 let authors = [
-  {name: 'Patric Rothfuss', age:44, id:'1'},
-  {name: 'Brandon Sanderson', age:42, id:'2'},
-  {name: 'Terry Pratchett', age:66, id:'3'},
+  {id:'1', name: 'Patric Rothfuss', age:44},
+  {id:'2', name: 'Brandon Sanderson', age:42},
+  {id:'3', name: 'Terry Pratchett', age:66},
 ]
 
 const BookType = new GraphQLObjectType({
@@ -28,7 +28,14 @@ const BookType = new GraphQLObjectType({
   fields: () => ({
     id: {type: GraphQLID},
     name: {type: GraphQLString},
-    genre: {type: GraphQLString}
+    genre: {type: GraphQLString},
+    author: {
+      type: AuthorType,
+      resolve(parent, args){
+        console.log(parent);
+        return _.find(authors, { id: parent.authorId });
+      }
+    }
   })
 });
 
@@ -49,7 +56,6 @@ const RootQuery = new GraphQLObjectType({
       args: { id: { type: GraphQLID } }, 
       resolve(parent, args) {
         // code to get data from DB / other source
-        console.log(typeof(args.id));
         return _.find(books, { id: args.id });
       }
     },
